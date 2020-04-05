@@ -4,9 +4,13 @@ import PyQt5
 
 
 class QtWindowMixin:
-    def place_window(
+    def center_window(
         self, offset_x: Optional[int] = None, offset_y: Optional[int] = None
     ):
+        if not self.isVisible():
+            raise AssertionError(
+                "Qt object must be visible before calling this function."
+            )
 
         desktop = PyQt5.QtWidgets.QApplication.desktop()
         screen = desktop.screenNumber(desktop.cursor().pos())
