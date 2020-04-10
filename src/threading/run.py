@@ -95,10 +95,12 @@ class Worker(PyQt5.QtCore.QRunnable):
 
         self._signals.started.emit(self.__name)
 
+        logger.debug(f"Thread started.")
+
         try:
             result = self.__func(*self.__args, **self.__kwargs)
         except Exception:
-            traceback.print_exc()
+            logger.exception(f"Thread encountered an error during execution.")
             exception_obj: Optional[BaseException] = sys.exc_info()[-2]
             traceback_obj: Optional[TracebackType] = sys.exc_info()[-1]
             traceback_formatted: str = traceback.format_exc()
@@ -109,6 +111,8 @@ class Worker(PyQt5.QtCore.QRunnable):
             self._signals.result.emit(result)
         finally:
             self._signals.complete.emit(self.__name)
+
+        logger.debug(f"Thread complete.")
 
     def connect(self, callbacks: Optional[Dict[str, Callable]]):
 
@@ -166,8 +170,8 @@ class WorkerAgent(PyQt5.QtCore.QObject):
                     "complete": on_worker_complete,
                 }
 
-        via https://doc.qt.io/qtforpython/PySide2/QtCore/QThread.html
-            https://doc.qt.io/qtforpython/PySide2/QtCore/QThreadPool.html """
+        https://doc.qt.io/qtforpython/PySide2/QtCore/QThread.html
+        https://doc.qt.io/qtforpython/PySide2/QtCore/QThreadPool.html """
 
         self._global_callbacks = global_callbacks
 
@@ -185,11 +189,8 @@ class WorkerAgent(PyQt5.QtCore.QObject):
         `QThreadPool`.
 
         func -- The function to call in the thread.
-
         args -- The function arguments.
-
         kwargs -- The function keyword arguments.
-
         local_callbacks -- Local callback are identical to global ones but are
             connected only the current worker. See `global_callbacks`. """
 
@@ -202,6 +203,8 @@ class WorkerAgent(PyQt5.QtCore.QObject):
         worker = Worker(func, *args, **kwargs)
         worker.connect(callbacks=self._global_callbacks)
         worker.connect(callbacks=local_callbacks)
+
+        logger.debug("Dispatching thread.")
 
         self.__threadpool.start(worker)
 
