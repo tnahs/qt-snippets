@@ -3,7 +3,7 @@ from typing import Optional
 import PyQt5
 
 
-class QtShowMixin:
+class QtMixins:
     def center_window(
         self, offset_x: Optional[int] = None, offset_y: Optional[int] = None
     ):
