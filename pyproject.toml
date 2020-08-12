@@ -5,8 +5,8 @@ description = ""
 authors = ["tnahs <31777797+tnahs@users.noreply.github.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-pyqt5 = "^5.14.1"
+python = "3.8.0"
+pyside2 = "^5.15.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
