@@ -1,7 +1,7 @@
 from typing import Optional
 
-import PySide2
-import PySide2.QtWidgets
+import PySide6
+import PySide6.QtWidgets
 
 
 class QtMixins:
@@ -13,7 +13,7 @@ class QtMixins:
                 "Qt object must be visible before calling this function."
             )
 
-        desktop = PySide2.QtWidgets.QApplication.desktop()
+        desktop = PySide6.QtWidgets.QApplication.desktop()
         screen = desktop.screenNumber(desktop.cursor().pos())
         center = desktop.screenGeometry(screen).center()
 

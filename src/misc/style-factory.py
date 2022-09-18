@@ -1,9 +1,9 @@
-import PySide2
-import PySide2.QtWidgets
+import PySide6
+import PySide6.QtWidgets
 
 
 def get_styles():
     """ Get all available Qt styles. """
 
-    PySide2.QtWidgets.QStyleFactory.keys()
-    # PySide2.QtWidgets.QApplication.setStyle()
+    PySide6.QtWidgets.QStyleFactory.keys()
+    # PySide6.QtWidgets.QApplication.setStyle()

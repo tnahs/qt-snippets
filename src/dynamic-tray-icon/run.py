@@ -2,10 +2,10 @@ import os
 import pathlib
 import sys
 
-import PySide2
-import PySide2.QtCore
-import PySide2.QtGui
-import PySide2.QtWidgets
+import PySide6
+import PySide6.QtCore
+import PySide6.QtGui
+import PySide6.QtWidgets
 
 
 ROOT = pathlib.Path(__file__).parent
@@ -21,15 +21,15 @@ class Icons:
     animated = os.fspath(root / "animated.gif")
 
 
-class DynamicTrayIcon(PySide2.QtWidgets.QSystemTrayIcon):
+class DynamicTrayIcon(PySide6.QtWidgets.QSystemTrayIcon):
     def __init__(self):
         super().__init__(parent=None)
 
-        self._icon_idle = PySide2.QtGui.QIcon(Icons.idle)
-        self._icon_busy = PySide2.QtGui.QIcon(Icons.busy)
-        self._icon_alert = PySide2.QtGui.QIcon(Icons.alert)
+        self._icon_idle = PySide6.QtGui.QIcon(Icons.idle)
+        self._icon_busy = PySide6.QtGui.QIcon(Icons.busy)
+        self._icon_alert = PySide6.QtGui.QIcon(Icons.alert)
 
-        self._icon_animated = PySide2.QtGui.QMovie(Icons.animated)
+        self._icon_animated = PySide6.QtGui.QMovie(Icons.animated)
         self._icon_animated.frameChanged.connect(self._update_icon_animated)
 
         self._set_icon()
@@ -60,33 +60,33 @@ class DynamicTrayIcon(PySide2.QtWidgets.QSystemTrayIcon):
             self.setIcon(self._icon_idle)
 
     def _update_icon_animated(self):
-        icon = PySide2.QtGui.QIcon(self._icon_animated.currentPixmap())
+        icon = PySide6.QtGui.QIcon(self._icon_animated.currentPixmap())
         self.setIcon(icon)
 
 
-class MainWindow(PySide2.QtWidgets.QFrame):
+class MainWindow(PySide6.QtWidgets.QFrame):
     def __init__(self):
         super().__init__(parent=None)
 
         self._tray_icon = DynamicTrayIcon()
         self._tray_icon.show()
 
-        button_idle = PySide2.QtWidgets.QPushButton("Idle")
+        button_idle = PySide6.QtWidgets.QPushButton("Idle")
         button_idle.clicked.connect(self._tray_icon.idle)
 
-        button_busy = PySide2.QtWidgets.QPushButton("Busy")
+        button_busy = PySide6.QtWidgets.QPushButton("Busy")
         button_busy.clicked.connect(self._tray_icon.busy)
 
-        button_alert = PySide2.QtWidgets.QPushButton("Alert")
+        button_alert = PySide6.QtWidgets.QPushButton("Alert")
         button_alert.clicked.connect(self._tray_icon.alert)
 
-        button_animated = PySide2.QtWidgets.QPushButton("Animated")
+        button_animated = PySide6.QtWidgets.QPushButton("Animated")
         button_animated.clicked.connect(self._tray_icon.animated)
 
-        button_quit = PySide2.QtWidgets.QPushButton("Quit")
+        button_quit = PySide6.QtWidgets.QPushButton("Quit")
         button_quit.clicked.connect(self.close)
 
-        layout = PySide2.QtWidgets.QVBoxLayout()
+        layout = PySide6.QtWidgets.QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
         layout.setSpacing(7)
         layout.addWidget(button_idle)
@@ -103,9 +103,9 @@ class MainWindow(PySide2.QtWidgets.QFrame):
 
 if __name__ == "__main__":
 
-    app = PySide2.QtWidgets.QApplication([])
+    app = PySide6.QtWidgets.QApplication([])
 
     main = MainWindow()
     main.show()
 
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

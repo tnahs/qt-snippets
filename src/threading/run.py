@@ -8,9 +8,9 @@ import traceback
 from types import TracebackType
 from typing import Any, Callable, Dict, Optional, Tuple
 
-import PySide2
-import PySide2.QtCore
-import PySide2.QtWidgets
+import PySide6
+import PySide6.QtCore
+import PySide6.QtWidgets
 
 
 logging.basicConfig(
@@ -41,7 +41,7 @@ class Task(object):
         )
 
 
-class WorkerSignals(PySide2.QtCore.QObject):
+class WorkerSignals(PySide6.QtCore.QObject):
     """ Defines signals for `Worker` objects.
 
     Note: The signals are decoupled from the `Worker` because `QRunnable` is
@@ -69,13 +69,13 @@ class WorkerSignals(PySide2.QtCore.QObject):
         "complete",
     ]
 
-    started = PySide2.QtCore.Signal(str)
-    error = PySide2.QtCore.Signal(tuple)
-    result = PySide2.QtCore.Signal(object)
-    complete = PySide2.QtCore.Signal(str)
+    started = PySide6.QtCore.Signal(str)
+    error = PySide6.QtCore.Signal(tuple)
+    result = PySide6.QtCore.Signal(object)
+    complete = PySide6.QtCore.Signal(str)
 
 
-class Worker(PySide2.QtCore.QRunnable):
+class Worker(PySide6.QtCore.QRunnable):
     def __init__(self, func: Callable, *args, **kwargs) -> None:
         super(Worker, self).__init__()
 
@@ -89,19 +89,19 @@ class Worker(PySide2.QtCore.QRunnable):
         """ Note: The current QThread can be access by calling the static
         function:
 
-            PySide2.QtCore.QThread.currentThread()
+            PySide6.QtCore.QThread.currentThread()
         """
 
         self.__name = threading.current_thread().name
 
         self._signals.started.emit(self.__name)
 
-        logger.debug(f"Thread started.")
+        logger.debug("Thread started.")
 
         try:
             result = self.__func(*self.__args, **self.__kwargs)
         except Exception:
-            logger.exception(f"Thread encountered an error during execution.")
+            logger.exception("Thread encountered an error during execution.")
             exception_obj: Optional[BaseException] = sys.exc_info()[-2]
             traceback_obj: Optional[TracebackType] = sys.exc_info()[-1]
             traceback_formatted: str = traceback.format_exc()
@@ -113,7 +113,7 @@ class Worker(PySide2.QtCore.QRunnable):
         finally:
             self._signals.complete.emit(self.__name)
 
-        logger.debug(f"Thread complete.")
+        logger.debug("Thread complete.")
 
     def connect(self, callbacks: Optional[Dict[str, Callable]]):
 
@@ -135,13 +135,13 @@ class Worker(PySide2.QtCore.QRunnable):
             if callback is None:
                 continue
 
-            signal: PySide2.QtCore.Signal = getattr(self._signals, signal_name)
+            signal: PySide6.QtCore.Signal = getattr(self._signals, signal_name)
             signal.connect(callback)
 
 
-class WorkerAgent(PySide2.QtCore.QObject):
+class WorkerAgent(PySide6.QtCore.QObject):
 
-    __threadpool = PySide2.QtCore.QThreadPool()
+    __threadpool = PySide6.QtCore.QThreadPool()
 
     def __init__(
         self,
@@ -171,8 +171,8 @@ class WorkerAgent(PySide2.QtCore.QObject):
                     "complete": on_worker_complete,
                 }
 
-        https://doc.qt.io/qtforpython/PySide2/QtCore/QThread.html
-        https://doc.qt.io/qtforpython/PySide2/QtCore/QThreadPool.html """
+        https://doc.qt.io/qtforpython/PySide6/QtCore/QThread.html
+        https://doc.qt.io/qtforpython/PySide6/QtCore/QThreadPool.html """
 
         self._global_callbacks = global_callbacks
 
@@ -222,7 +222,7 @@ class WorkerAgent(PySide2.QtCore.QObject):
         self.__threadpool.setMaxThreadCount(value)
 
 
-class MainWindow(PySide2.QtWidgets.QFrame):
+class MainWindow(PySide6.QtWidgets.QFrame):
     def __init__(self) -> None:
         super(MainWindow, self).__init__(parent=None)
 
@@ -241,20 +241,20 @@ class MainWindow(PySide2.QtWidgets.QFrame):
 
         self.setFixedSize(768, 512)
 
-        self._label_worker_agent_log = PySide2.QtWidgets.QLabel("Agent Log:")
-        self._worker_agent_log = PySide2.QtWidgets.QPlainTextEdit()
+        self._label_worker_agent_log = PySide6.QtWidgets.QLabel("Agent Log:")
+        self._worker_agent_log = PySide6.QtWidgets.QPlainTextEdit()
         self._worker_agent_log.setReadOnly(True)
 
-        self._worker_agent_progress_bar = PySide2.QtWidgets.QProgressBar()
+        self._worker_agent_progress_bar = PySide6.QtWidgets.QProgressBar()
 
-        self._label_worker_log = PySide2.QtWidgets.QLabel("Worker Log:")
-        self._worker_log = PySide2.QtWidgets.QPlainTextEdit()
+        self._label_worker_log = PySide6.QtWidgets.QLabel("Worker Log:")
+        self._worker_log = PySide6.QtWidgets.QPlainTextEdit()
         self._worker_log.setReadOnly(True)
 
-        self._button_new = PySide2.QtWidgets.QPushButton("Start New Task...")
+        self._button_new = PySide6.QtWidgets.QPushButton("Start New Task...")
         self._button_new.clicked.connect(self._on_button_new_clicked)
 
-        layout = PySide2.QtWidgets.QVBoxLayout()
+        layout = PySide6.QtWidgets.QVBoxLayout()
         layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(0)
         layout.addWidget(self._label_worker_agent_log)
@@ -336,14 +336,14 @@ class MainWindow(PySide2.QtWidgets.QFrame):
     def _random_string() -> str:
         length = random.randint(5, 10)
         letters = string.ascii_lowercase
-        return "".join(random.choice(letters) for l in range(length))
+        return "".join(random.choice(letters) for _ in range(length))
 
 
 if __name__ == "__main__":
 
-    app = PySide2.QtWidgets.QApplication([])
+    app = PySide6.QtWidgets.QApplication([])
 
     main = MainWindow()
     main.show()
 
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
